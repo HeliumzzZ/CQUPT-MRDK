@@ -18,6 +18,7 @@ key = {
     'xh': 'S211231006',
     'timestamp': time.time(),
 }
+print(key['timestamp'])
 key_base64 = base64.b64encode(json.dumps(key).encode('utf-8'))
 key = {
     'key': key_base64
