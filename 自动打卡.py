@@ -2,32 +2,42 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2022/5/25 11:45
 # @Author  : chy
-# @Site    : 
+# @Site    :
 # @File    : 自动打卡.py
 # @Software: PyCharm
 import requests
 import time
 import base64
 import json
-
+import os
+openid = os.environ['openid']
+xh = os.environ['xh']
+server = os.environ['server']
 headers = {
     "User-Agent": "Mozilla/5.0 (Linux; Android 10; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/78.0.3904.62 XWEB/2693 MMWEBSDK/201001 Mobile Safari/537.36 MMWEBID/7311 MicroMessenger/7.0.20.1781(0x27001439) Process/appbrand2 WeChat/arm64 NetType/4G Language/zh_CN ABI/arm64",
     "Referer": "https://servicewechat.com/wx8227f55dc4490f45/76/page-frame.html"
 }
 key = {
-    'xh': 'S211231006',
-    'timestamp': time.time(),
+    'xh': xh,
+    'timestamp': time.time()
 }
-print(key['timestamp'])
+print(time.time())
 key_base64 = base64.b64encode(json.dumps(key).encode('utf-8'))
 key = {
     'key': key_base64
 }
 
 r = requests.post('https://we.cqupt.edu.cn/api/yjs_mrdk/get_yjs_mrdk_flag.php', data=key)
+print(r.text)
 r_dict = json.loads(r.text)
 if r_dict["data"]["count"] == "1":
     print("打了")
+    param_server = {
+        'title': '每日打卡',
+        'desp': '今日已打卡'
+    }
+    r = requests.post(f'https://sctapi.ftqq.com/{server}.send',data=param_server)
+    print(r.text)
 else:
     params = {
         'address': '重庆市南岸区江南水岸二组团七栋',
@@ -38,9 +48,9 @@ else:
     r_dict = json.loads(r.text)
     print(r_dict)
     mrdk_dit = {
-        'openid': '',
+        'openid': openid,
         'timestamp': time.time(),
-        'xh': 'S211231006',
+        'xh': xh,
         'name': '陈泓宇',
         'xb': '男',
         'szdq': r_dict["result"]["address_components"]["province"] + r_dict["result"]["address_components"]["city"] +
@@ -69,3 +79,9 @@ else:
     }
     r = requests.post("https://we.cqupt.edu.cn/api/yjs_mrdk/post_yjs_mrdk_info.php", headers=headers, data=data)
     print(r.text)
+    if r.status_code == 200:
+        param_server = {
+            'title':'打卡结果',
+            'desp':'已成功打卡'
+        }
+        r = requests.post(f'https://sctapi.ftqq.com/{server}.send',data=param_server)
