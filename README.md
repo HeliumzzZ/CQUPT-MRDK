@@ -42,6 +42,6 @@ server酱链接为：https://sct.ftqq.com/forward
 
 该脚本只是本人闲来无事开发玩的，疫情期间注意安全，该打卡打卡，使用此脚本造成的任何后果与本人无关，我都要寄了！！！！
 
-链接：https://github.com/HeliumzzZ/JavaStudy
+链接：https://github.com/HeliumzzZ/CQUPT-MRDK
 
 
