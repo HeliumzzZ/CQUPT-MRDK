@@ -22,3 +22,7 @@ jobs:
     - name: MRDK
       run: |
         python ./自动打卡.py
+      env:
+        xh: ${{ secrets.XH }}
+        openid: ${{ secrets.OPENID }}
+        server: ${{ secrets.SERVER }}
