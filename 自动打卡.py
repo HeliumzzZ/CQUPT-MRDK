@@ -10,6 +10,7 @@ import time
 import base64
 import json
 import os
+
 openid = os.environ['openid']
 xh = os.environ['xh']
 server = os.environ['server']
@@ -17,37 +18,89 @@ headers = {
     "User-Agent": "Mozilla/5.0 (Linux; Android 10; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/78.0.3904.62 XWEB/2693 MMWEBSDK/201001 Mobile Safari/537.36 MMWEBID/7311 MicroMessenger/7.0.20.1781(0x27001439) Process/appbrand2 WeChat/arm64 NetType/4G Language/zh_CN ABI/arm64",
     "Referer": "https://servicewechat.com/wx8227f55dc4490f45/76/page-frame.html"
 }
+
 key = {
-    'xh': xh,
+    'xh': 'S211231006',
     'timestamp': time.time()
 }
-print(time.time())
-key_base64 = base64.b64encode(json.dumps(key).encode('utf-8'))
-key = {
-    'key': key_base64
-}
 
-r = requests.post('https://we.cqupt.edu.cn/api/yjs_mrdk/get_yjs_mrdk_flag.php', data=key)
-print(r.text)
-r_dict = json.loads(r.text)
-if r_dict["data"]["count"] == "1":
-    print("打了")
-    param_server = {
-        'title': '每日打卡',
-        'desp': '今日已打卡'
+
+def encode(key):
+    encoded_key = base64.b64encode(json.dumps(key).encode('utf-8'))
+    return {
+        'key': encoded_key
     }
-    r = requests.post(f'https://sctapi.ftqq.com/{server}.send',data=param_server)
-    print(r.text)
-else:
+
+
+def mrdk_status(key):
+    i = 0
+    while i < 3:
+        try:
+            r = requests.post('https://we.cqupt.edu.cn/api/yjs_mrdk/get_yjs_mrdk_flag.php', data=encode(key),
+                              timeout=5)
+            r_dict = json.loads(r.text)
+            return r_dict['data']['count']
+        except requests.exceptions.RequestException as e:
+            print(e.strerror)
+            i += 1
+
+
+def sendToWechat(param):
+    i = 0
+    while i < 3:
+        try:
+            r = requests.post(f'https://sctapi.ftqq.com/{server}.send', data=param, timeout=5)
+            return
+        except requests.exceptions.RequestException as e:
+            i += 1
+            print(e.re)
+
+
+def getposition(param):
+    i = 0
+    while i < 3:
+        try:
+            r = requests.get("https://apis.map.qq.com/ws/geocoder/v1/", params=params)
+            r_dict = json.loads(r.text)
+            return r_dict
+        except requests.exceptions.RequestException as e:
+            i += 1
+            print(e.re)
+
+
+def dk(param):
+    i = 0
+    while i < 3:
+        try:
+            r = requests.post("https://we.cqupt.edu.cn/api/yjs_mrdk/post_yjs_mrdk_info.php", headers=headers,
+                              data=encode(mrdk_dict))
+            if r.status_code == 200:
+                param_server = {
+                    'title': '打卡结果',
+                    'desp': '已成功打卡'
+                }
+                sendToWechat(param_server)
+                return
+            else:
+                param_server = {
+                    'title': '打卡结果',
+                    'desp': '打卡失败'
+                }
+                sendToWechat(param_server)
+                return
+        except requests.exceptions.RequestException as e:
+            i += 1
+            print(e.re)
+
+
+# if mrdk_status(key) != "0":
     params = {
         'address': '重庆市南岸区江南水岸二组团七栋',
         'key': "PULBZ-BSEWU-MAEVV-2IAJR-ZCAS3-53F4O"
     }
-    r = requests.get("https://apis.map.qq.com/ws/geocoder/v1/", params=params)
-    print(r.text)
-    r_dict = json.loads(r.text)
-    print(r_dict)
-    mrdk_dit = {
+
+    r_dict = getposition(params)
+    mrdk_dict = {
         'openid': openid,
         'timestamp': time.time(),
         'xh': xh,
@@ -72,16 +125,12 @@ else:
         'jkmresult': '绿色',
         'beizhu': '无'
     }
-    print(mrdk_dit)
-    mrdk_base64 = base64.b64encode(json.dumps(mrdk_dit).encode('utf-8'))
-    data = {
-        'key': mrdk_base64
+    dk(mrdk_dict)
+
+# else:
+    print("打了")
+    param_server = {
+        'title': '每日打卡',
+        'desp': '今日已打卡'
     }
-    r = requests.post("https://we.cqupt.edu.cn/api/yjs_mrdk/post_yjs_mrdk_info.php", headers=headers, data=data)
-    print(r.text)
-    if r.status_code == 200:
-        param_server = {
-            'title':'打卡结果',
-            'desp':'已成功打卡'
-        }
-        r = requests.post(f'https://sctapi.ftqq.com/{server}.send',data=param_server)
+    sendToWechat(param_server)
