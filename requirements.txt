@@ -1,2 +1,2 @@
 json5==0.9.6
-requests @ file:///home/conda/feedstock_root/build_artifacts/requests_1626393743643/work
+requests 
