@@ -53,7 +53,7 @@ def sendToWechat(param):
             return
         except requests.exceptions.RequestException as e:
             i += 1
-            print(e.re)
+            print(e.response)
 
 
 def getposition(param):
@@ -65,7 +65,7 @@ def getposition(param):
             return r_dict
         except requests.exceptions.RequestException as e:
             i += 1
-            print(e.re)
+            print(e.response)
 
 
 def dk(param):
@@ -74,26 +74,24 @@ def dk(param):
         try:
             r = requests.post("https://we.cqupt.edu.cn/api/yjs_mrdk/post_yjs_mrdk_info.php", headers=headers,
                               data=encode(mrdk_dict))
-            if r.status_code == 200:
-                param_server = {
-                    'title': '打卡结果',
-                    'desp': '已成功打卡'
-                }
-                sendToWechat(param_server)
-                return
-            else:
-                param_server = {
-                    'title': '打卡结果',
-                    'desp': '打卡失败'
-                }
-                sendToWechat(param_server)
-                return
+
+            param_server = {
+                'title': '打卡结果',
+                'desp': '已成功打卡'
+            }
+            sendToWechat(param_server)
+            return
         except requests.exceptions.RequestException as e:
             i += 1
-            print(e.re)
+            param_server = {
+                'title': '打卡结果',
+                'desp': '打卡失败'
+            }
+            sendToWechat(param_server)
+            print(e.response)
 
 
-if mrdk_status(key) == "0":
+if mrdk_status(key) != "0":
     params = {
         'address': '重庆市南岸区江南水岸二组团七栋',
         'key': "PULBZ-BSEWU-MAEVV-2IAJR-ZCAS3-53F4O"
