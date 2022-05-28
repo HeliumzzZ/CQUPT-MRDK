@@ -91,7 +91,7 @@ def dk(param):
             print(e.response)
 
 
-if mrdk_status(key) != "0":
+if mrdk_status(key) == "0":
     params = {
         'address': '重庆市南岸区江南水岸二组团七栋',
         'key': "PULBZ-BSEWU-MAEVV-2IAJR-ZCAS3-53F4O"
