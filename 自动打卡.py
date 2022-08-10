@@ -16,7 +16,7 @@ xh = os.environ['xh']
 server = os.environ['server']
 headers = {
     "User-Agent": "Mozilla/5.0 (Linux; Android 10; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/78.0.3904.62 XWEB/2693 MMWEBSDK/201001 Mobile Safari/537.36 MMWEBID/7311 MicroMessenger/7.0.20.1781(0x27001439) Process/appbrand2 WeChat/arm64 NetType/4G Language/zh_CN ABI/arm64",
-    "Referer": "http://ehall.cqupt.edu.cn/publicapp/sys/cyxsjkdkmobile/*default/index.html"
+    "Referer": "https://servicewechat.com/wx8227f55dc4490f45/76/page-frame.html"
 }
 
 key = {
@@ -72,7 +72,7 @@ def dk(param):
     i = 0
     while i < 3:
         try:
-            r = requests.post("http://ehall.cqupt.edu.cn/publicapp/sys/cyxsjkdk/modules/yddjk/T_XSJKDK_XSTBXX_SAVE.do", headers=headers,
+            r = requests.post("https://we.cqupt.edu.cn/api/yjs_mrdk/post_yjs_mrdk_info.php", headers=headers,
                               data=encode(mrdk_dict))
 
             param_server = {
@@ -91,7 +91,7 @@ def dk(param):
             print(e.response)
 
 
-if mrdk_status(key) == "1":
+if mrdk_status(key) == "0":
     params = {
         'address': '重庆市南岸区江南水岸二组团七栋',
         'key': "PULBZ-BSEWU-MAEVV-2IAJR-ZCAS3-53F4O"
