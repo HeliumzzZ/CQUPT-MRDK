@@ -1,10 +1,10 @@
 name: CQUPTMRDK
 
 on: 
-    push:
+#     push:
    
-#     schedule:
-#     - cron: 01 16,17,18 * * *
+    schedule:
+    - cron: 01 16,17,18 * * *
 
 jobs:
   build:
